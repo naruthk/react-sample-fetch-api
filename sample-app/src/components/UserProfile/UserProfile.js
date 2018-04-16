@@ -15,7 +15,7 @@ class UserProfile extends Component {
         <img className="profile_photo" src={photo} alt={name} />
         <p className="name">
           {name.charAt(0).toUpperCase() + name.slice(1)}
-          <span class="age">{age} yrs.</span>
+          <span className="age">{age} yrs.</span>
         </p>
         <p className="biography">{bio}</p>
         <p className="additional_info"><b>Contact:</b> {number}</p>

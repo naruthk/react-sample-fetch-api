@@ -1,3 +1,10 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 16px;
+  background-color: #eeeeee;
+	background: linear-gradient(135deg, #2980b9 0%, #9b59b6 100%);
+}
+
 ::-moz-selection { 
   background: #2980b9; 
   color: #ffffff;
@@ -7,21 +14,14 @@
   color: #ffffff; 
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: 16px;
-  background-color: #eeeeee;
-	background: linear-gradient(135deg, #2980b9 0%, #9b59b6 100%);
-}
-
-img.logo {
-  width: 200px;
-}
-
 header {
   background-color: #ffffff;
   text-align: center;
   padding: 20px;
+}
+
+header img.logo {
+  width: 200px;
 }
 
 .Cards {
@@ -33,4 +33,10 @@ header {
   grid-column-gap: 20px;
   grid-row-gap: 20px;
   justify-items: center;
+}
+
+footer {
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 30px;
 }

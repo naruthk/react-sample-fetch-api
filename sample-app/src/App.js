@@ -19,7 +19,7 @@ class App extends Component {
     this.state = {
       users: {},
       sortedUsers: {},
-      loading: undefined
+      loading: true
     }
     this.url = "http://appsheettest1.azurewebsites.net/sample";
     this.fetchUsers = this.fetchUsers.bind(this);
@@ -166,6 +166,9 @@ class App extends Component {
         <div className="Cards">
           {sortedUsers}
         </div>
+        <footer>
+          <p>Take-home project for Naruth Kongurai (Sam)</p>
+        </footer>
       </div>
     );
   }
