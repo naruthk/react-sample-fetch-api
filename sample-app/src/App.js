@@ -1,16 +1,24 @@
 import React, { Component } from 'react';
-import './App.css';
 import Loading from './components/Loading';
 import UserProfile from './components/UserProfile';
+
+import './App.css';
 
 class App extends Component {
 
   constructor() {
     super();
+    
+    /* States:
+      - Users: A map of k and v, where the key holds the ID of each user
+               and a value holds a map of that particular user's data
+      - Loading: A boolean value representing rendering status 
+    */
     this.state = {
       users: {},
       loading: undefined
     }
+    this.url = "http://appsheettest1.azurewebsites.net/sample";
     this.fetchUsers = this.fetchUsers.bind(this);
     this.getEachUserData = this.getEachUserData.bind(this);
     this.displayUserProfile = this.displayUserProfile.bind(this);
@@ -18,41 +26,56 @@ class App extends Component {
 
   componentDidMount() {
     this.setState({ loading: true });
-    const url = "http://appsheettest1.azurewebsites.net/sample";
-    this.fetchUsers(url);
+    this.fetchUsers();
   }
 
-  async fetchUsers(url) {
+  /*
+    Fetches every user in the database API, storing them in state.
+    Connection done via an async/await with variant parameters
+  */
+  async fetchUsers() {
     try {
-      const res = await fetch(`${url}/list`);
+      const res = await fetch(`${this.url}/list`);
       const json = await res.json();
-      this.getEachUserData(url, json);
+
+      // Having retrieved our data, let's establish a new connection to our
+      // API to obtain data for each individual user
+      this.getEachUserData(json);
       
+      // A token represents a signal that there are still more results left
+      // that have yet been retrieved. Keep retrieving result "token" is null.
       let token = ("token" in json) ? json.token : "";
       do { 
         try {
-          const res = await fetch(`${url}/list?token=${token}`);
+          const res = await fetch(`${this.url}/list?token=${token}`);
           const json = await res.json();
-          this.getEachUserData(url, json);
+          this.getEachUserData(json);
           token = ("token" in json) ? json.token : "";
         }
         catch(e) {
-          console.log("Unable to obtain data from server");
+          console.log(`${e} - Unable to obtain data from server`);
         }
       } while (token)
 
+      // Having retrieved every user's information, loading is done.
       this.setState({ loading: false })
     }
     catch(e) {
-      console.log("Unable to obtain data from server");
+      console.log(`${e} - Unable to obtain data from server`);
     }
   }
 
-  async getEachUserData(url, json) {
+  /*
+    - Accepts a JSON object that contains the information for all of our users.
+    Now use this object to further contact the API to obtain specific
+    information for each individual user.
+    - Once information is obtained, the state is updated. 
+  */
+  async getEachUserData(json) {
     const usersArray = json.result;
     usersArray.forEach(async id => {
       try {
-        const res = await fetch(`${url}/detail/${id}`);
+        const res = await fetch(`${this.url}/detail/${id}`);
         const json = await res.json();
         const item = {
           "id": json.id,
@@ -67,19 +90,33 @@ class App extends Component {
         this.setState({ users });
       }
       catch(e) {
-        console.log(`Unable to obtain data for id: ${id}`);
+        console.log(`${e} - Unable to obtain data for id: ${id}`);
       }
     });
   }
 
+  /*
+    Given a key, displays the current user profile
+    Parameters:
+      key - the identifer for a particular item
+  */
   displayUserProfile(key) {
     return <UserProfile key={key} user={this.state.users[key]} />
   }
 
+  /*
+    Renders profile of all users.
+  */
   render() {
 
     if (this.state.loading) return <Loading />
 
+    /* 
+      An array of users that are queried by:
+        - sorting age in ascending order
+        - filtering for users with valid phone numbers
+        - limiting array size to 5
+    */
     let youngestUsersArray = Object.keys(this.state.users)
       .sort( (a, b) => {
         const userAge1 = this.state.users[a].age;
@@ -92,6 +129,10 @@ class App extends Component {
       })
       .slice(0, 5);
 
+    /* 
+      This new map holds key and value pairs for users. Rather than using
+      an array to iterate over, a map offers faster lookup time.
+    */
     let youngestUsersMap = {};
     youngestUsersArray.forEach( id => {
       youngestUsersMap[id] = this.state.users[id];
@@ -105,6 +146,10 @@ class App extends Component {
         <div>
           <h2>5 Youngest Users Sorted by Name</h2>
           <div>
+            {/* 
+              Last but not least, we sort users by their names and then
+              display each individual user profile by mapping each one.
+            */}
             {Object.keys(youngestUsersMap)
               .sort( (a, b) => {
                 const name1 = this.state.users[a].name;

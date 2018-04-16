@@ -8,12 +8,12 @@ const propTypes = {
 class UserProfile extends Component {
 
   render() {
-    const {id, name, age, number, photo, bio} = this.props.user;
+    const {name, age, number, photo, bio} = this.props.user;
     return (
       <div>
         <p>Name: {name}, Age: {age}, Number: {number}</p>
         <p>{bio}</p>
-        <img src={photo} />
+        <img src={photo} alt={name} />
       </div>
     );
   }
