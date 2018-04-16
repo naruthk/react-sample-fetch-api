@@ -6,6 +6,8 @@ This sample React web application retrives information from an external source (
 
 AppSheet truly cares about information and data. I believe that it makes sense to go with a clutter-free interface. The end result is a beautiful web app that focuses on presenting the data in an attractive and meaningful way.
 
+![Screenshot](screenshots/screenshot_ui-1.png)
+
 ## Business Logic & Requirements
 
 - Ability to view 5 youngest users.
