@@ -11,9 +11,9 @@ class App extends Component {
     }
     this.fetchUsers = this.fetchUsers.bind(this);
     this.getEachUserData = this.getEachUserData.bind(this);
+    this.displayUserProfile = this.displayUserProfile.bind(this);
   }
 
-  // After the initial rendering, we fetch data to obtain users' information
   componentDidMount() {
     this.setState({ loading: true });
     const url = "http://appsheettest1.azurewebsites.net/sample";
@@ -26,8 +26,6 @@ class App extends Component {
       const json = await res.json();
       this.getEachUserData(url, json);
       
-      // If there are more tokens, we continue fetching another list of users
-      // until there is none remaining
       let token = ("token" in json) ? json.token : "";
       do { 
         try {
@@ -72,36 +70,59 @@ class App extends Component {
     });
   }
 
+  displayUserProfile(key) {
+    const users = this.state.users;
+    const { id, name, age, number, photo, bio } = users[key];
+    return (
+      <div>
+        <p>Name: {name}, Age: {age}, Number: {number}</p>
+        <img src={photo} />
+      </div>
+    )
+  }
+
   render() {
 
     if (!this.state.loading) {
- 
-      {Object.keys(this.state.users).map( key => { 
-        
-        const id = this.state.users[key].id
-        const name = this.state.users[key].name
-        const age = this.state.users[key].age
-        const number = this.state.users[key].number
-        const photo = this.state.users[key].photo
-        const bio = this.state.users[key].bio
+      let youngestUsersArray = Object.keys(this.state.users)
+        .sort( (a, b) => {
+          const userAge1 = this.state.users[a].age;
+          const userAge2 = this.state.users[b].age;
+          return userAge1 - userAge2;
+        })
+        .filter( key => {
+          const number = this.state.users[key].number;
+          return (number != "") && (/^[0-9]{3}[-][0-9]{3}[-][0-9]{4}$/.test(number));
+        })
+        .slice(0, 5);
 
-        // console.log(`id=${key} => ${JSON.stringify(this.state.users[key])}`)
-      })}
+      let youngestUsersMap = {};
+      youngestUsersArray.forEach( id => {
+        youngestUsersMap[id] = this.state.users[id];
+      });
 
       return (
         <div className="App">
           <header>
-            <h1>Hi</h1>
+            <h1>AppSheet Web App</h1>
           </header>
           <div>
-            <h2>5 Youngest Users</h2>
-            <p>{JSON.stringify(this.state.users)}</p>
+            <h2>5 Youngest Users Sorted by Name</h2>
+            <div>
+              {Object.keys(youngestUsersMap)
+                .sort( (a, b) => {
+                  const name1 = this.state.users[a].name;
+                  const name2 = this.state.users[b].name;
+                  return name1 > name2;
+                })
+                .map(this.displayUserProfile)}
+            </div>
           </div>
         </div>
       );
     }
 
-    return <div>Loading...{this.state.users.length}</div>
+    return <div>The application is loading...{this.state.users.length}</div>
   }
 
 }
