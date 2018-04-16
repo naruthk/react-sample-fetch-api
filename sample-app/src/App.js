@@ -3,6 +3,7 @@ import Loading from './components/Loading';
 import UserProfile from './components/UserProfile';
 
 import './App.css';
+import Logo from './assets/logo_appsheet.png';
 
 class App extends Component {
 
@@ -10,9 +11,9 @@ class App extends Component {
     super();
     
     /* States:
-      - Users: A map of k and v, where the key holds the ID of each user
+      - users: A map of k and v, where the key holds the ID of each user
                and a value holds a map of that particular user's data
-      - Loading: A boolean value representing rendering status 
+      - loading: A boolean value representing rendering status 
     */
     this.state = {
       users: {},
@@ -59,6 +60,7 @@ class App extends Component {
 
       // Having retrieved every user's information, loading is done.
       this.setState({ loading: false })
+      
     }
     catch(e) {
       console.log(`${e} - Unable to obtain data from server`);
@@ -141,7 +143,7 @@ class App extends Component {
     return (
       <div className="App">
         <header>
-          <h1>AppSheet Web App</h1>
+          <img src={Logo} alt="App Sheet" />
         </header>
         <div>
           <h2>5 Youngest Users Sorted by Name</h2>
