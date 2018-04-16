@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
+import Loading from './components/Loading';
+import UserProfile from './components/UserProfile';
 
 class App extends Component {
 
@@ -71,58 +73,49 @@ class App extends Component {
   }
 
   displayUserProfile(key) {
-    const users = this.state.users;
-    const { id, name, age, number, photo, bio } = users[key];
-    return (
-      <div>
-        <p>Name: {name}, Age: {age}, Number: {number}</p>
-        <img src={photo} />
-      </div>
-    )
+    return <UserProfile key={key} user={this.state.users[key]} />
   }
 
   render() {
 
-    if (!this.state.loading) {
-      let youngestUsersArray = Object.keys(this.state.users)
-        .sort( (a, b) => {
-          const userAge1 = this.state.users[a].age;
-          const userAge2 = this.state.users[b].age;
-          return userAge1 - userAge2;
-        })
-        .filter( key => {
-          const number = this.state.users[key].number;
-          return (number != "") && (/^[0-9]{3}[-][0-9]{3}[-][0-9]{4}$/.test(number));
-        })
-        .slice(0, 5);
+    if (this.state.loading) return <Loading />
 
-      let youngestUsersMap = {};
-      youngestUsersArray.forEach( id => {
-        youngestUsersMap[id] = this.state.users[id];
-      });
+    let youngestUsersArray = Object.keys(this.state.users)
+      .sort( (a, b) => {
+        const userAge1 = this.state.users[a].age;
+        const userAge2 = this.state.users[b].age;
+        return userAge1 - userAge2;
+      })
+      .filter( key => {
+        const number = this.state.users[key].number;
+        return (number !== "") && (/^[0-9]{3}[-][0-9]{3}[-][0-9]{4}$/.test(number));
+      })
+      .slice(0, 5);
 
-      return (
-        <div className="App">
-          <header>
-            <h1>AppSheet Web App</h1>
-          </header>
+    let youngestUsersMap = {};
+    youngestUsersArray.forEach( id => {
+      youngestUsersMap[id] = this.state.users[id];
+    });
+
+    return (
+      <div className="App">
+        <header>
+          <h1>AppSheet Web App</h1>
+        </header>
+        <div>
+          <h2>5 Youngest Users Sorted by Name</h2>
           <div>
-            <h2>5 Youngest Users Sorted by Name</h2>
-            <div>
-              {Object.keys(youngestUsersMap)
-                .sort( (a, b) => {
-                  const name1 = this.state.users[a].name;
-                  const name2 = this.state.users[b].name;
-                  return name1 > name2;
-                })
-                .map(this.displayUserProfile)}
-            </div>
+            {Object.keys(youngestUsersMap)
+              .sort( (a, b) => {
+                const name1 = this.state.users[a].name;
+                const name2 = this.state.users[b].name;
+                return name1 > name2;
+              })
+              .map(this.displayUserProfile)}
           </div>
         </div>
-      );
-    }
-
-    return <div>The application is loading...{this.state.users.length}</div>
+      </div>
+    );
   }
 
 }
