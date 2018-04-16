@@ -1,0 +1,46 @@
+.profile {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 20px;
+  transition: all .5s;
+  -webkit-box-shadow: 6px 10px 31px -12px rgba(0,0,0,0.75);
+  -moz-box-shadow: 6px 10px 31px -12px rgba(0,0,0,0.75);
+  box-shadow: 6px 10px 31px -12px rgba(0,0,0,0.75);
+}
+
+img.profile_photo {
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+  transition: filter .5s;
+  -webkit-filter: grayscale(1);
+  filter: grayscale(1);
+}
+
+img.profile_photo:hover {
+  -webkit-filter: grayscale(0);
+  filter: grayscale(0);
+}
+
+p.name {
+  font-size: 16pt;
+  font-weight: 600;
+}
+
+span.age {
+  margin-left: 20px;
+  font-size: 14pt;
+  font-weight: 300;
+}
+
+p.additional_info {
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
+  font-size: 10pt;
+  font-weight: 400;
+}
+
+p.biography {
+  font-size: 12pt;
+  line-height: 1.2em;
+}

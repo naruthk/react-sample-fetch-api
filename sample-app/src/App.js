@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Loading from './components/Loading';
-import UserProfile from './components/UserProfile';
+import Loading from './components/Loading/Loading';
+import UserProfile from './components/UserProfile/UserProfile';
 
 import './App.css';
 import Logo from './assets/logo_appsheet.png';
@@ -13,16 +13,19 @@ class App extends Component {
     /* States:
       - users: A map of k and v, where the key holds the ID of each user
                and a value holds a map of that particular user's data
+      - sortedUsers: Like users, but only after users have been sorted 
       - loading: A boolean value representing rendering status 
     */
     this.state = {
       users: {},
+      sortedUsers: {},
       loading: undefined
     }
     this.url = "http://appsheettest1.azurewebsites.net/sample";
     this.fetchUsers = this.fetchUsers.bind(this);
     this.getEachUserData = this.getEachUserData.bind(this);
     this.displayUserProfile = this.displayUserProfile.bind(this);
+    this.retrieveYoungestUsers = this.retrieveYoungestUsers.bind(this);
   }
 
   componentDidMount() {
@@ -58,9 +61,10 @@ class App extends Component {
         }
       } while (token)
 
-      // Having retrieved every user's information, loading is done.
+      // Having retrieved every user's information, loading is done and
+      // proceed to retrieving youngest users
       this.setState({ loading: false })
-      
+      this.retrieveYoungestUsers();
     }
     catch(e) {
       console.log(`${e} - Unable to obtain data from server`);
@@ -98,21 +102,9 @@ class App extends Component {
   }
 
   /*
-    Given a key, displays the current user profile
-    Parameters:
-      key - the identifer for a particular item
+    Retrieve the youngest users according to age and valid telephone numbers
   */
-  displayUserProfile(key) {
-    return <UserProfile key={key} user={this.state.users[key]} />
-  }
-
-  /*
-    Renders profile of all users.
-  */
-  render() {
-
-    if (this.state.loading) return <Loading />
-
+  retrieveYoungestUsers() {
     /* 
       An array of users that are queried by:
         - sorting age in ascending order
@@ -120,51 +112,63 @@ class App extends Component {
         - limiting array size to 5
     */
     let youngestUsersArray = Object.keys(this.state.users)
-      .sort( (a, b) => {
-        const userAge1 = this.state.users[a].age;
-        const userAge2 = this.state.users[b].age;
-        return userAge1 - userAge2;
-      })
-      .filter( key => {
-        const number = this.state.users[key].number;
-        return (number !== "") && (/^[0-9]{3}[-][0-9]{3}[-][0-9]{4}$/.test(number));
-      })
-      .slice(0, 5);
+    .sort( (a, b) => {
+      // Sort by age
+      const userAge1 = this.state.users[a].age;
+      const userAge2 = this.state.users[b].age;
+      return userAge1 - userAge2;
+    })
+    .filter( key => {
+      // Filter by valid telephone number
+      // Format: 555-555-5555
+      const number = this.state.users[key].number;
+      return (number !== "") && (/^[0-9]{3}[-][0-9]{3}[-][0-9]{4}$/.test(number));
+    })
+    .slice(0, 5);
+
+    youngestUsersArray.forEach( id => {
+      const sortedUsers = {...this.state.sortedUsers};
+      sortedUsers[id] = this.state.users[id];
+      this.setState({ sortedUsers })
+    });
+  }
+
+  /*
+    Given a key, displays the current user profile
+    Parameters:
+      key - the identifer for a particular item
+  */
+  displayUserProfile(key) {
+    return <UserProfile key={key} user={this.state.sortedUsers[key]} />
+  }
+
+  render() {
+    if (this.state.loading) return <Loading />
 
     /* 
-      This new map holds key and value pairs for users. Rather than using
-      an array to iterate over, a map offers faster lookup time.
+      Sort users by their names and then display each individual user
+      profile by mapping each one.
     */
-    let youngestUsersMap = {};
-    youngestUsersArray.forEach( id => {
-      youngestUsersMap[id] = this.state.users[id];
-    });
+    const sortedUsers = Object.keys(this.state.sortedUsers)
+      .sort( (a, b) => {
+        const name1 = this.state.users[a].name;
+        const name2 = this.state.users[b].name;
+        return name1 > name2;
+      })
+      .map(this.displayUserProfile)
 
     return (
       <div className="App">
         <header>
-          <img src={Logo} alt="App Sheet" />
+          <img className="logo" src={Logo} alt="App Sheet" />
+          <h1>5 Youngest Users Sorted by Name</h1>
         </header>
-        <div>
-          <h2>5 Youngest Users Sorted by Name</h2>
-          <div>
-            {/* 
-              Last but not least, we sort users by their names and then
-              display each individual user profile by mapping each one.
-            */}
-            {Object.keys(youngestUsersMap)
-              .sort( (a, b) => {
-                const name1 = this.state.users[a].name;
-                const name2 = this.state.users[b].name;
-                return name1 > name2;
-              })
-              .map(this.displayUserProfile)}
-          </div>
+        <div className="Cards">
+          {sortedUsers}
         </div>
       </div>
     );
   }
-
 }
 
 export default App;

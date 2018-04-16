@@ -1,7 +1,36 @@
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+::-moz-selection { 
+  background: #2980b9; 
+  color: #ffffff;
+}
+::selection { 
+  background: #2980b9;
+  color: #ffffff; 
 }
 
-.App {
-  margin: 50px;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 16px;
+  background-color: #eeeeee;
+	background: linear-gradient(135deg, #2980b9 0%, #9b59b6 100%);
+}
+
+img.logo {
+  width: 200px;
+}
+
+header {
+  background-color: #ffffff;
+  text-align: center;
+  padding: 20px;
+}
+
+.Cards {
+  padding: 60px 0 60px 0;
+  display: grid;
+  max-width: 950px;
+  margin: auto;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  justify-items: center;
 }
